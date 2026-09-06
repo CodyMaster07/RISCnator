@@ -1,5 +1,5 @@
 .data
-msg_init: .asciz "Salve camarada! Eu sou o gênio RISCnator.\nEstou pensando em um número de 1 a 100, tente adivinhar qual é.\n"
+msg_init: .asciz "Salve camarada! Eu sou o gênio RISCnator.\nEstou pensando em um número de 1 a 100, tente adivinhar qual é!\nConforme você for chutando, vou te informar se o meu número é maior ou menor que o número que você chutou.\n"
 
 msg_chute: .asciz "Chute um número de 1 a 100: "
 
@@ -28,7 +28,17 @@ main:
 	la a0, msg_init
 	ecall 
 	
-	li s0, 67
+	# Chama a função de gerar um número aleatório
+	jal get_rand
+	
+	li t1, 100
+	rem s0, a0, t1
+	addi s0, s0, 1 # Faz com que o número seja do intervalo de entre 1 a 100
+	
+	li a7, 1 # Printa o número gerado para debug
+	mv a0, s0
+	ecall 
+	
 	# Chama a função
 	jal ra, get_chute # Chama a função recursiva
 	
@@ -126,6 +136,22 @@ inv_chute:  # ROTINA QUE IMPRIME MENSAGEM DE NÚMERO INVÁLIDO
 	addi sp, sp, 4 # Libera o espaço na pilha que não foi ocupado
 	j get_chute_cp
 	
+get_rand: # FUNÇÃO QUE GERA UM NÚMERO ALEATÓRIO ENTRE DA ESCALA DE 2^31 (LINEAR CONGRUENTIAL GENERATOR)
+	li a7, 30 # Carrega o código para obter o timer atual da máquina
+	ecall
+	
+	# Gerador: X = (A*Xo + B)mod 2^31 
+	li a1, 1103515245 # Carrega em a1 o A
+	li a2, 12345 # Carrega em a2 oo B
+	li a3, 1
+	
+	mul a0, a0, a1
+	add a0, a0, a2
+	
+	srli a0, a0, 1 # Descarta o bit de sinal de complemento de dois
+	
+	jr ra
+
 pop_stack: # FUNÇÃO QUE PRITNTA TODOS OS CHUTES ARMAZENADOS NA STACK
 	addi t1, t1, 1 # Incrementa o novo contador
 	lw a0, 0(sp) # Guarda em a0 o chute a ser impresso

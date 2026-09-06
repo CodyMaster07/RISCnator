@@ -9,4 +9,4 @@ O gênio também deve tratar números inválidos.
 Eu escolhi não salvar números inválidos, eu apenas não guardo eles na pilha e reinicio o loop de coleta de chutes.
 
 ### O QUE FALTA FAZER ###
-O algoritmo de geração de número aleatório deve ser criado.
+Relatório Overleaf
